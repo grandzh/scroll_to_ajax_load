@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>scroll to ajax load</title>
+<script src="js/jquery-1.8.3.min.js"></script>
+<style>
+	.msgContent li{
+		font-size:12px;
+		color:#999;	
+	}
+	.msgError{
+		color:#F00;
+		background-color:#CCC;	
+	}
+	.loading{
+		color:#0F0;	
+		background-color:#CCC;
+	}
+	.msgContent .ajaxContent{
+		color:#000;	
+	}
+	
+</style>
+
+</head>
+
+<body style="height:1000px;">
+<ul class="msgContent">
+	<li>条数一</li>
+	<li>条数二</li>
+	<li>条数三</li>
+</ul>
+</body>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		var scrollEle=$(document);
+		
+		
+		var loadFlag=false;
+		
+		scrollEle.scroll(function(){
+			if(scrollEle.scrollTop()<10){
+				console.log(1);
+				loadFlag=true;	
+			}
+			if(loadFlag){
+				$.ajax({
+					type:"POST",
+					url:"scroll_to_ajax_load.php",
+					data:{load:true},
+					cache:false,
+					success:function(msg){
+						$('.loading').remove();
+						
+						$('.msgContent').prepend('<li class="ajaxContent">'+msg+'</li>');
+						loadFlag=false;
+					},
+					error:function(msg){
+						$('.msgContent').before('<div class="msgError">网络故障</div>');
+					},
+					beforeSend:function(){
+						$('.msgContent').before('<div class="loading">...loading</div>');	
+					}
+					
+				});
+			}
+		});
+		
+		
+	})
+</script>
+
+</html>
